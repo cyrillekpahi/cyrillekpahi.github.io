@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOCOFRAIS ANGRE</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050d1a;--bg2:#0b1629;--bg3:#111f38;--bg4:#172847;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+  --accent:#00c896;--accent2:#0ea5e9;--accent3:#f59e0b;
+  --red:#ef4444;--orange:#f97316;--text:#f0f6ff;--text2:#8ba4c0;--text3:#4a6580;
+  --font:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;
+  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 20%,rgba(0,200,150,0.07) 0%,transparent 50%),
+             radial-gradient(ellipse at 80% 80%,rgba(14,165,233,0.07) 0%,transparent 50%);
+  pointer-events:none;z-index:0;}
+
+/* ── LOGIN ── */
+#login-page{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.login-card{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:40px;width:420px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.6);animation:slideUp 0.4s cubic-bezier(.4,0,.2,1);position:relative;z-index:1}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-badge{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-size:11px;font-weight:800;letter-spacing:2px;padding:4px 12px;border-radius:6px;text-transform:uppercase;margin-bottom:10px}
+.login-title{font-size:22px;font-weight:800;margin-bottom:4px}.login-sub{font-size:12px;color:var(--text3)}
+.manager-select{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.manager-btn{padding:14px 10px;border-radius:10px;border:2px solid var(--border);background:var(--bg3);cursor:pointer;text-align:center;transition:all 0.2s;font-family:var(--font)}
+.manager-btn:hover{border-color:var(--border2);background:var(--bg4)}
+.manager-btn.sel-green{border-color:var(--accent);background:rgba(0,200,150,0.1)}
+.manager-btn.sel-blue{border-color:var(--accent2);background:rgba(14,165,233,0.1)}
+.m-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;margin:0 auto 8px}
+.m-name{font-size:12px;font-weight:700}.m-role{font-size:10px;color:var(--text3);margin-top:2px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:6px;display:block;font-weight:500}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px;font-family:var(--font);transition:border-color 0.15s}
+.form-input:focus{outline:none;border-color:var(--accent)}.form-input.error{border-color:var(--red)}
+.pwd-wrap{position:relative}
+.pwd-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px}
+.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#000;font-size:15px;font-weight:800;font-family:var(--font);cursor:pointer;transition:all 0.2s;margin-top:4px}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,200,150,0.3)}
+.btn-login:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.error-msg{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+.error-msg.show{display:block;animation:fadeIn 0.2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.login-footer{text-align:center;margin-top:16px;font-size:11px;color:var(--text3)}
+
+/* ── SIDEBAR ── */
+#app-page{display:none}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:14px 16px 10px;border-bottom:1px solid var(--border)}
+.logo-badge{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-size:10px;font-weight:800;letter-spacing:1.5px;padding:3px 8px;border-radius:4px;text-transform:uppercase;margin-bottom:5px;display:inline-block}
+.logo-title{font-size:14px;font-weight:800}.logo-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.week-box{margin:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:9px}
+.week-title{font-size:9px;color:var(--accent3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:5px}
+.week-info{font-size:10px;color:var(--text2);margin-bottom:3px;font-family:var(--mono)}
+.week-swap{width:100%;padding:5px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:var(--accent3);border-radius:6px;font-size:10px;font-weight:700;font-family:var(--font);cursor:pointer;margin-top:5px;transition:all 0.15s}
+.week-swap:hover{background:rgba(245,158,11,0.25)}
+.sidebar-date{padding:7px 14px;border-bottom:1px solid var(--border);font-size:10px;color:var(--text2);font-family:var(--mono)}
+.nav-section{padding:9px 8px 3px;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--text2);transition:all 0.15s;margin:1px 8px;border:1px solid transparent}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(0,200,150,0.12);color:var(--accent);border-color:rgba(0,200,150,0.2)}
+.nav-icon{font-size:13px;width:17px;text-align:center}
+.user-box{margin:8px 10px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px}
+.user-header{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.user-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.user-name{font-size:12px;font-weight:700}.user-role{font-size:10px;color:var(--text3)}
+.user-db{font-size:9px;color:var(--text2);padding:3px 7px;background:rgba(255,255,255,0.04);border-radius:5px;margin-bottom:6px;font-family:var(--mono)}
+.btn-logout{width:100%;padding:5px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:7px;font-size:11px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.15s}
+.btn-logout:hover{background:rgba(239,68,68,0.2)}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh;position:relative;z-index:1}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(5,13,26,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;justify-content:space-between}
+.page-title{font-size:14px;font-weight:700}.page-subtitle{font-size:10px;color:var(--text2)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.alert-banner{margin:10px 20px 0;padding:10px 14px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;transition:all 0.3s}
+.alert-ok{background:rgba(0,200,150,0.12);border:1px solid rgba(0,200,150,0.3);color:var(--accent)}
+.alert-err{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;animation:shake 0.4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.panel{display:none;padding:14px 20px 40px}.panel.active{display:block;animation:fadeIn 0.2s ease}
+
+/* ── ALERTE POPUP DÉFICIT ── */
+.deficit-popup{
+  position:fixed;top:20px;right:20px;z-index:9000;
+  background:rgba(239,68,68,0.95);border:1px solid #f87171;border-radius:12px;
+  padding:14px 18px;max-width:320px;display:none;
+  animation:slideInRight 0.3s ease;box-shadow:0 8px 32px rgba(239,68,68,0.4);
+}
+@keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+.deficit-popup-title{font-size:13px;font-weight:800;color:#fff;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.deficit-popup-body{font-size:12px;color:rgba(255,255,255,0.85)}
+.deficit-popup-close{position:absolute;top:8px;right:10px;background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:14px;padding:2px 5px}
+
+/* ── KPIs ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:11px;text-align:center;transition:all 0.2s}
+.kpi-card:hover{transform:translateY(-2px);border-color:var(--border2)}
+.kpi-icon{font-size:15px;margin-bottom:3px}.kpi-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}
+.kpi-value{font-size:14px;font-weight:700;font-family:var(--mono)}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:13px}
+.chart-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:9px}
+.bar-chart{display:flex;flex-direction:column;gap:7px}
+.bar-row{display:grid;grid-template-columns:110px 1fr 80px;align-items:center;gap:8px}
+.bar-label{font-size:11px;color:var(--text2);text-align:right}
+.bar-track{height:20px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.8s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;padding-left:6px}
+.bar-fill span{font-size:9px;font-weight:700;color:#000}
+.bar-amount{font-size:11px;font-weight:600;font-family:var(--mono);text-align:right}
+.pie-container{display:flex;align-items:center;gap:14px}
+.pie-legend{display:flex;flex-direction:column;gap:7px}
+.pie-legend-item{display:flex;align-items:center;gap:7px;font-size:11px}
+.pie-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* ── SAISIE ── */
+.section-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.section-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:rgba(0,200,150,0.15);color:var(--accent)}
+.caissiere-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:9px;overflow:hidden;transition:border-color 0.2s}
+.caissiere-card.has-deficit{border-color:rgba(239,68,68,0.5)!important;box-shadow:0 0 12px rgba(239,68,68,0.1)}
+.caissiere-header{padding:8px 12px;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);cursor:pointer;border-bottom:1px solid var(--border)}
+.caissiere-name{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.caissiere-total{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent3)}
+.caissiere-body{padding:9px}
+.mode-section{margin-bottom:7px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.mode-header{padding:6px 10px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.mode-total{font-family:var(--mono);font-size:11px;font-weight:700}
+.mode-om{background:rgba(249,115,22,0.15);border-bottom:1px solid rgba(249,115,22,0.2);color:#fb923c}
+.mode-tpe{background:rgba(14,165,233,0.12);border-bottom:1px solid rgba(14,165,233,0.15);color:#38bdf8}
+.mode-wav{background:rgba(6,182,212,0.12);border-bottom:1px solid rgba(6,182,212,0.15);color:#22d3ee}
+.mode-pri{background:rgba(168,85,247,0.12);border-bottom:1px solid rgba(168,85,247,0.15);color:#c084fc}
+.mode-esp{background:rgba(0,200,150,0.12);border-bottom:1px solid rgba(0,200,150,0.15);color:var(--accent)}
+.mode-body{padding:7px}
+.recu-table{width:100%;border-collapse:collapse;margin-bottom:5px}
+.recu-table th{font-size:9px;color:var(--text3);text-align:left;padding:4px 4px;border-bottom:1px solid var(--border);font-weight:500}
+.recu-table td{padding:2px 4px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}
+.recu-table tr:last-child td{border-bottom:none}
+.recu-num{font-family:var(--mono);font-size:9px;color:var(--text3);width:36px;white-space:nowrap}
+input.ri{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);padding:3px 5px;border-radius:5px;font-family:var(--mono);transition:border-color 0.15s;font-size:11px}
+input.ri:focus{outline:none;border-color:var(--accent2)}
+input.ri-ref{width:130px}input.ri-mont{width:105px;text-align:right}input.ri-heure{width:68px}
+.btn-del-recu{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:5px;padding:2px 6px;font-size:10px;cursor:pointer;transition:all 0.15s;font-family:var(--font);font-weight:600}
+.btn-del-recu:hover{background:rgba(239,68,68,0.25)}
+.btn-add-recu{display:flex;align-items:center;gap:5px;background:rgba(14,165,233,0.1);border:1px dashed rgba(14,165,233,0.35);color:#38bdf8;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:var(--font);width:100%;justify-content:center}
+.btn-add-recu:hover{background:rgba(14,165,233,0.2);border-style:solid}
+.especes-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px;background:rgba(0,200,150,0.05)}
+.especes-label{font-size:12px;color:var(--accent);font-weight:500}
+.especes-input{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.3);color:var(--accent);padding:5px 9px;border-radius:6px;font-size:13px;font-family:var(--mono);font-weight:700;text-align:right;width:140px}
+.especes-input:focus{outline:none;border-color:var(--accent)}
+.solde-banner{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 16px;margin:10px 0;display:flex;align-items:center;justify-content:space-between}
+
+/* ── BOUTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.15s;border:none}
+.btn-primary{background:var(--accent);color:#000}.btn-primary:hover{background:#00e0a8;transform:translateY(-1px)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--bg4)}
+.btn-warning{background:rgba(245,158,11,0.15);color:var(--accent3);border:1px solid rgba(245,158,11,0.3)}.btn-warning:hover{background:rgba(245,158,11,0.25)}
+.btn-info{background:rgba(14,165,233,0.15);color:#38bdf8;border:1px solid rgba(14,165,233,0.3)}.btn-info:hover{background:rgba(14,165,233,0.25)}
+.btn-sm{padding:5px 9px;font-size:11px}
+
+/* ── TABLES ── */
+.recap-table,.ctrl-table{width:100%;border-collapse:collapse}
+.recap-table th,.ctrl-table th{font-size:10px;color:var(--text3);text-align:center;padding:6px 7px;border-bottom:1px solid var(--border);font-weight:500;background:var(--bg3);white-space:nowrap}
+.ctrl-table th{text-align:left}
+.recap-table td,.ctrl-table td{padding:6px 7px;border-bottom:1px solid var(--border);font-size:11px;text-align:center;font-family:var(--mono)}
+.ctrl-table td{font-size:12px}
+.recap-table tr:hover td,.ctrl-table tr:hover td{background:rgba(255,255,255,0.02)}
+.recap-nom{text-align:left!important;font-family:var(--font)!important;font-weight:600;color:var(--text);font-size:12px!important}
+.recap-total{font-weight:700;color:var(--accent3)}
+.subtotal-row td{background:var(--bg3)!important;font-weight:700}
+.grandtotal-row td{background:rgba(239,68,68,0.08)!important;font-weight:700;color:#f87171}
+.ctrl-attendu{font-family:var(--mono);font-weight:600;color:var(--accent2)}
+.ctrl-reel input{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--accent3);padding:3px 7px;border-radius:6px;font-size:11px;font-family:var(--mono);font-weight:700;text-align:right;width:120px}
+.ctrl-reel input:focus{outline:none;border-color:var(--accent3)}
+.ctrl-ecart{font-family:var(--mono);font-weight:700}
+.ecart-ok{color:var(--accent)}.ecart-pos{color:var(--orange)}.ecart-neg{color:var(--red)}
+.status-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px;display:inline-block}
+.status-ok{background:rgba(0,200,150,0.15);color:var(--accent)}
+.status-wait{background:rgba(139,164,192,0.15);color:var(--text2)}
+.status-exc{background:rgba(249,115,22,0.15);color:var(--orange)}
+.status-def{background:rgba(239,68,68,0.2);color:#f87171}
+.synth-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.synth-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:13px;text-align:center}
+.synth-val{font-size:22px;font-weight:800;font-family:var(--mono);margin-bottom:3px}.synth-lbl{font-size:11px;color:var(--text3)}
+.badge-m{background:rgba(14,165,233,0.15);color:#38bdf8;font-size:9px;padding:2px 5px;border-radius:10px;font-weight:700}
+.badge-a{background:rgba(0,200,150,0.12);color:var(--accent);font-size:9px;padding:2px 5px;border-radius:10px;font-weight:700}
+.collapse{display:none}.collapse.open{display:block}
+
+/* ── HISTORIQUE ── */
+.hist-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.hist-search{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:8px;font-size:12px;font-family:var(--font);width:220px;transition:border-color 0.15s}
+.hist-search:focus{outline:none;border-color:var(--accent)}
+.hist-list{display:flex;flex-direction:column;gap:8px}
+.hist-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:13px;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:border-color 0.15s}
+.hist-card:hover{border-color:var(--border2)}
+.hist-date{font-size:13px;font-weight:700;color:var(--text)}
+.hist-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hist-stat{font-size:11px;color:var(--text2);font-family:var(--mono)}
+.hist-stat span{color:var(--accent3);font-weight:700}
+.hist-actions{display:flex;gap:6px;flex-shrink:0}
+.hist-empty{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+
+/* ── ÉDITION CAISSIÈRES ── */
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.edit-item{display:flex;align-items:center;gap:8px;background:var(--bg3);padding:8px 10px;border-radius:8px;border:1px solid var(--border)}
+.edit-num{font-size:11px;font-weight:700;width:28px;text-align:center;color:var(--text3);font-family:var(--mono)}
+.edit-equipe{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;flex-shrink:0;width:48px;text-align:center}
+.edit-input{flex:1;background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-size:12px;font-family:var(--font);transition:border-color 0.15s}
+.edit-input:focus{outline:none;border-color:var(--accent)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:24px;width:520px;max-width:95vw;max-height:85vh;overflow-y:auto;animation:slideUp 0.3s ease}
+.modal-title{font-size:16px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:9px 14px;border-radius:8px;font-size:12px;z-index:9999;box-shadow:var(--shadow);animation:fadeIn 0.2s ease}
+
+
+/* ── RECHERCHE CAISSIÈRE ── */
+.search-bar-wrap{position:sticky;top:0;z-index:10;background:var(--bg);padding:8px 0 6px;margin-bottom:4px}
+.search-bar{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 14px 8px 36px;border-radius:10px;font-size:12px;font-family:var(--font);transition:border-color 0.15s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234a6580' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center}
+.search-bar:focus{outline:none;border-color:var(--accent)}
+.search-no-result{text-align:center;padding:20px;color:var(--text3);font-size:12px}
+
+/* ── BOUTON RESET CAISSIÈRE ── */
+.btn-reset-caissiere{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;transition:all 0.15s;font-family:var(--font);line-height:1}
+.btn-reset-caissiere:hover{background:rgba(239,68,68,0.25);border-color:rgba(239,68,68,0.4);transform:scale(1.1)}
+
+
+/* ── MODAL CHANGEMENT MDP ── */
+.pwd-strength{height:4px;border-radius:2px;margin-top:6px;transition:all 0.3s;background:var(--bg4)}
+.pwd-hint{font-size:10px;color:var(--text3);margin-top:4px}
+.pwd-rules{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.pwd-rule{font-size:11px;display:flex;align-items:center;gap:6px}
+.pwd-rule.ok{color:var(--accent)}.pwd-rule.ko{color:var(--text3)}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:10px}
+</style>
+</head>
+<body>
+
+<!-- ALERTE DÉFICIT POPUP -->
+<div class="deficit-popup" id="deficit-popup">
+  <button class="deficit-popup-close" onclick="document.getElementById('deficit-popup').style.display='none'">✕</button>
+  <div class="deficit-popup-title">⚠️ ALERTE DÉFICIT DÉTECTÉ</div>
+  <div class="deficit-popup-body" id="deficit-popup-body"></div>
+</div>
+
+<!-- MODAL ÉDITION NOMS -->
+<div class="modal-overlay" id="modal-noms">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Modifier les noms des caissières</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:14px">Les modifications sont appliquées immédiatement. La rotation des équipes est conservée.</div>
+    <div class="edit-grid" id="edit-noms-grid"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-noms')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveNoms()">✅ Sauvegarder les noms</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VOIR JOURNÉE HISTORIQUE -->
+<div class="modal-overlay" id="modal-hist-detail">
+  <div class="modal-box" style="width:700px">
+    <div class="modal-title" id="hist-detail-title">📅 Journée du ...</div>
+    <div id="hist-detail-content"></div>
+    <div class="modal-footer">
+      <button class="btn btn-info" onclick="exportPDF(currentHistDetail)">📄 Exporter PDF</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-hist-detail')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL CHANGEMENT MOT DE PASSE -->
+<div class="modal-overlay" id="modal-changepwd">
+  <div class="modal-box" style="width:400px">
+    <div class="modal-title">🔑 Changer mon mot de passe</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:14px" id="changepwd-user"></div>
+
+    <div class="form-group">
+      <label class="form-label">Mot de passe actuel</label>
+      <div class="pwd-wrap">
+        <input class="form-input" type="password" id="pwd-current" placeholder="Mot de passe actuel...">
+        <button class="pwd-eye" onclick="togglePwdField('pwd-current')">👁️</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nouveau mot de passe</label>
+      <div class="pwd-wrap">
+        <input class="form-input" type="password" id="pwd-new" placeholder="Nouveau mot de passe..." oninput="checkPwdStrength(this.value)">
+        <button class="pwd-eye" onclick="togglePwdField('pwd-new')">👁️</button>
+      </div>
+      <div class="pwd-strength" id="pwd-strength-bar"></div>
+      <div class="pwd-hint" id="pwd-strength-label"></div>
+      <div class="pwd-rules" id="pwd-rules">
+        <div class="pwd-rule ko" id="rule-len">✗  Au moins 8 caractères</div>
+        <div class="pwd-rule ko" id="rule-upper">✗  Au moins 1 majuscule</div>
+        <div class="pwd-rule ko" id="rule-num">✗  Au moins 1 chiffre</div>
+        <div class="pwd-rule ko" id="rule-special">✗  Au moins 1 caractère spécial (!@#...)</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Confirmer le nouveau mot de passe</label>
+      <div class="pwd-wrap">
+        <input class="form-input" type="password" id="pwd-confirm" placeholder="Confirmer le mot de passe...">
+        <button class="pwd-eye" onclick="togglePwdField('pwd-confirm')">👁️</button>
+      </div>
+    </div>
+
+    <div class="error-msg" id="changepwd-error"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-changepwd')">Annuler</button>
+      <button class="btn btn-primary" onclick="doChangePwd()">🔑 Confirmer le changement</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="data:image/png;base64,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" alt="Socofrais" style="width:110px;height:auto;margin-bottom:10px;border-radius:8px">
+      <div class="login-title" style="color:#c0392b">SOCOFRAIS ANGRE</div>
+      <div class="login-sub">Gestion de Caisse — Sélectionnez votre profil</div>
+    </div>
+    <div class="manager-select">
+      <div class="manager-btn" id="btn-ms" onclick="selectManager('marina')">
+        <div class="m-avatar" style="background:rgba(0,200,150,0.2);color:var(--accent)">MS</div>
+        <div class="m-name">Marina Seka</div><div class="m-role">Gestionnaire N°1</div>
+      </div>
+      <div class="manager-btn" id="btn-mo" onclick="selectManager('ohouchi')">
+        <div class="m-avatar" style="background:rgba(14,165,233,0.2);color:#38bdf8">MO</div>
+        <div class="m-name">Mme Ohouchi</div><div class="m-role">Gestionnaire N°2</div>
+      </div>
+    </div>
+    <div class="error-msg" id="err-select">⚠️ Veuillez sélectionner un profil.</div>
+    <div class="error-msg" id="err-pwd">❌ Mot de passe incorrect.</div>
+    <div class="form-group">
+      <label class="form-label">🔒 Mot de passe</label>
+      <div class="pwd-wrap">
+        <input class="form-input" type="password" id="pwd-input" placeholder="Entrez votre mot de passe..." onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="pwd-eye" onclick="togglePwd()" id="eye-btn">👁️</button>
+      </div>
+    </div>
+    <button class="btn-login" onclick="doLogin()" id="login-btn">🔓 Se connecter</button>
+    <div class="login-footer">🔐 Données isolées par gestionnaire — SOCOFRAIS ANGRE</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-page">
+  <nav class="sidebar">
+    <div class="sidebar-logo" style="padding:10px 12px 8px;text-align:center">
+      <img src="data:image/png;base64,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" alt="Socofrais" style="width:90px;height:auto;margin-bottom:4px;border-radius:6px">
+      <div style="font-size:10px;color:var(--text3);margin-top:2px">Gestion Caisse — 18 Caissières</div>
+    </div>
+    <div class="week-box">
+      <div class="week-title">🔄 Rotation Équipes</div>
+      <div class="week-info" id="week-num"></div>
+      <div class="week-info" id="week-config"></div>
+      <button class="week-swap" onclick="swapTeams()">⇄ Forcer la rotation</button>
+    </div>
+    <div class="sidebar-date" id="sidebar-date"></div>
+    <div class="nav-section">Navigation</div>
+    <div class="nav-item active" onclick="showPanel('dashboard')"><span class="nav-icon">📊</span> Tableau de Bord</div>
+    <div class="nav-item" onclick="showPanel('saisie')"><span class="nav-icon">🧾</span> Saisie Reçus</div>
+    <div class="nav-item" onclick="showPanel('recap')"><span class="nav-icon">⚖️</span> Récap Journalier</div>
+    <div class="nav-item" onclick="showPanel('controle')"><span class="nav-icon">🔍</span> Contrôle Caisse</div>
+    <div class="nav-item" onclick="showPanel('historique')"><span class="nav-icon">📅</span> Historique</div>
+    <div class="nav-section">Paramètres</div>
+    <div class="nav-item" onclick="openEditNoms()"><span class="nav-icon">✏️</span> Modifier les noms</div>
+    <div class="nav-item" onclick="openChangePwd()"><span class="nav-icon">🔑</span> Changer mot de passe</div>
+    <div class="nav-item" onclick="resetData()"><span class="nav-icon">🔄</span> Nouvelle Journée</div>
+    <div class="nav-item" onclick="exportPDF(null)"><span class="nav-icon">📄</span> Exporter PDF</div>
+    <div class="user-box">
+      <div class="user-header">
+        <div class="user-avatar" id="user-avatar"></div>
+        <div><div class="user-name" id="user-name"></div><div class="user-role" id="user-role"></div></div>
+      </div>
+      <div class="user-db" id="user-db"></div>
+      <button class="btn-logout" onclick="doLogout()">🚪 Se déconnecter</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="topbar-title">Tableau de Bord</div>
+        <div class="page-subtitle" id="topbar-sub"></div>
+      </div>
+      <div class="topbar-actions">
+        <span id="topbar-date" style="font-size:10px;color:var(--text2);font-family:var(--mono)"></span>
+        <button class="btn btn-warning btn-sm" onclick="exportPDF(null)">📄 PDF</button>
+        <button class="btn btn-primary btn-sm" onclick="saveData()">💾 Sauvegarder</button>
+      </div>
+    </div>
+    <div class="alert-banner alert-ok" id="alert-banner">
+      <span>✅</span><span id="alert-text">Aucune anomalie — Toutes les caisses sont équilibrées</span>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div style="height:12px"></div>
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <div class="charts-row">
+        <div class="chart-box"><div class="chart-title">📊 Encaissements par Mode</div><div class="bar-chart" id="bar-chart"></div></div>
+        <div class="chart-box"><div class="chart-title">🌗 Matin vs Après-midi</div>
+          <div class="pie-container">
+            <svg id="pie-svg" width="120" height="120" viewBox="0 0 120 120"></svg>
+            <div class="pie-legend" id="pie-legend"></div>
+          </div>
+        </div>
+      </div>
+      <div class="chart-box" style="margin-bottom:12px"><div class="chart-title">🏆 Performance Individuelle</div><div id="perf-chart"></div></div>
+      <div class="chart-box"><div class="chart-title">📋 Récapitulatif par Mode</div><table class="recap-table" id="recap-modes-table"></table></div>
+    </div>
+
+    <!-- SAISIE -->
+    <div class="panel" id="panel-saisie">
+      <div style="height:12px"></div>
+      <div class="search-bar-wrap">
+        <input class="search-bar" type="text" id="caissiere-search" placeholder="🔍  Rechercher une caissière..." oninput="filterCaissieres(this.value)">
+      </div>
+      <div id="saisie-header-matin" class="section-title"></div>
+      <div id="saisie-matin"></div>
+      <div class="solde-banner">
+        <div style="font-size:13px;color:var(--accent3);font-weight:600">💰 Solde transmis à l'après-midi</div>
+        <div style="font-family:var(--mono);font-size:18px;font-weight:800;color:var(--accent3)" id="solde-amount">0 FCFA</div>
+      </div>
+      <div id="saisie-header-aprem" class="section-title"></div>
+      <div id="saisie-aprem"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="showPanel('recap')">⚖️ Récapitulatif →</button>
+        <button class="btn btn-secondary" onclick="showPanel('controle')">🔍 Contrôle →</button>
+        <button class="btn btn-warning" onclick="cloturerJournee()">📅 Clôturer la journée</button>
+      </div>
+    </div>
+
+    <!-- RECAP -->
+    <div class="panel" id="panel-recap"><div style="height:12px"></div><div id="recap-content"></div></div>
+
+    <!-- CONTROLE -->
+    <div class="panel" id="panel-controle"><div style="height:12px"></div><div id="controle-content"></div></div>
+
+    <!-- HISTORIQUE -->
+    <div class="panel" id="panel-historique">
+      <div style="height:12px"></div>
+      <div class="hist-toolbar">
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:3px">📅 Historique des journées</div>
+          <div style="font-size:11px;color:var(--text3)" id="hist-count">0 journée(s) enregistrée(s)</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="hist-search" type="text" id="hist-search" placeholder="Rechercher une date..." oninput="filterHist(this.value)">
+          <button class="btn btn-secondary btn-sm" onclick="buildHistorique()">🔄 Actualiser</button>
+        </div>
+      </div>
+      <div class="hist-list" id="hist-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════
+const MANAGERS = {
+  marina:  {name:'Marina Seka',  role:'Gestionnaire N°1', initials:'MS', password:'33b2d8181e6221c3169cdee51c1f7b5e1d6bcd5d0ac184ac9a7ea44bca62aa5a', color:'var(--accent)', colorBg:'rgba(0,200,150,0.2)',  dbKey:'socofrais_v4_marina'},
+  ohouchi: {name:'Mme Ohouchi', role:'Gestionnaire N°2', initials:'MO', password:'aa1fc69f1ef2ca39d8481c33e20bf7d38415a1331b35bcf531231269fa62fab7', color:'#38bdf8',        colorBg:'rgba(14,165,233,0.2)', dbKey:'socofrais_v4_ohouchi'}
+}
+
+const DEFAULT_GROUPE_A = ["Adjoua Kouamé","Aminata Diallo","Bintou Koné","Clarisse Yao","Edwige Brou","Fatoumata Traoré","Grâce Kouassi","Honorine Gbagbo","Isabelle N'Goran"]
+const DEFAULT_GROUPE_B = ["Josephine Dago","Kadiatou Camara","Laure Assi","Marie Ouattara","Nathalie Koffi","Odette Touré","Pascaline Soro","Rachelle Anouman","Sophie Akissi"]
+
+const MODES_MULTI = ["Orange Money","TPE","Wave","Prizy"]
+const MODES_ALL   = ["Orange Money","TPE","Wave","Prizy","Espèces"]
+const MODES_CLR   = {"Orange Money":"#fb923c","TPE":"#38bdf8","Wave":"#22d3ee","Prizy":"#c084fc","Espèces":"#00c896"}
+const MODES_ICO   = {"Orange Money":"💳","TPE":"🖥️","Wave":"🌊","Prizy":"🟠","Espèces":"💵"}
+const MODES_CSS   = {"Orange Money":"mode-om","TPE":"mode-tpe","Wave":"mode-wav","Prizy":"mode-pri","Espèces":"mode-esp"}
+
+let currentManager = null
+let selectedManagerId = null
+let data = {}
+let currentHistDetail = null
+let lastDeficitCount = 0
+
+// ══════════════════════════════════════════════════════════
+// NOMS DYNAMIQUES
+// ══════════════════════════════════════════════════════════
+function getGroupeA(){return data.noms?.groupeA||[...DEFAULT_GROUPE_A]}
+function getGroupeB(){return data.noms?.groupeB||[...DEFAULT_GROUPE_B]}
+
+// ══════════════════════════════════════════════════════════
+// ROTATION
+// ══════════════════════════════════════════════════════════
+function getWeekNumber(date=new Date()){
+  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()))
+  const dayNum=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-dayNum)
+  const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1))
+  return Math.ceil((((d-yearStart)/86400000)+1)/7)
+}
+function getEquipes(){
+  const wn=getWeekNumber(),swapped=data.teamSwap||false
+  const aMatin=swapped?!(wn%2===1):(wn%2===1)
+  return{matin:aMatin?getGroupeA():getGroupeB(),aprem:aMatin?getGroupeB():getGroupeA()}
+}
+function swapTeams(){data.teamSwap=!data.teamSwap;saveData();buildAll();updateWeekUI();showToast('🔄 Rotation effectuée')}
+function updateWeekUI(){
+  const wn=getWeekNumber(),eq=getEquipes(),sw=data.teamSwap||false
+  const el1=document.getElementById('week-num');if(el1)el1.textContent=`Semaine N° ${wn} — ${sw?'Forcée':'Auto'}`
+  const el2=document.getElementById('week-config');if(el2)el2.innerHTML=`☀️ Matin : Groupe ${eq.matin===getGroupeA()?'A':'B'}<br>🌙 Soir : Groupe ${eq.aprem===getGroupeA()?'A':'B'}`
+}
+
+// ══════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════
+function selectManager(id){
+  selectedManagerId=id
+  document.getElementById('btn-ms').className='manager-btn'+(id==='marina'?' sel-green':'')
+  document.getElementById('btn-mo').className='manager-btn'+(id==='ohouchi'?' sel-blue':'')
+  document.getElementById('err-select').classList.remove('show')
+  document.getElementById('pwd-input').focus()
+}
+function togglePwd(){const i=document.getElementById('pwd-input'),e=document.getElementById('eye-btn');if(i.type==='password'){i.type='text';e.textContent='🙈'}else{i.type='password';e.textContent='👁️'}}
+async function hashPassword(pwd){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pwd))
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')
+}
+async function doLogin(){
+  if(!selectedManagerId){document.getElementById('err-select').classList.add('show');return}
+  document.getElementById('err-select').classList.remove('show')
+  const pwd=document.getElementById('pwd-input').value,mgr=MANAGERS[selectedManagerId]
+  const hash=await hashPassword(pwd)
+  if(hash!==mgr.password){
+    document.getElementById('err-pwd').classList.add('show')
+    document.getElementById('pwd-input').classList.add('error')
+    document.getElementById('login-btn').disabled=true
+    setTimeout(()=>{document.getElementById('login-btn').disabled=false;document.getElementById('pwd-input').classList.remove('error')},2000);return
+  }
+  document.getElementById('err-pwd').classList.remove('show')
+  currentManager=selectedManagerId;sessionStorage.setItem('socofrais_session',selectedManagerId)
+  loadManagerData();setupManagerUI()
+  document.getElementById('login-page').style.display='none'
+  document.getElementById('app-page').style.display='block'
+  buildAll();updateWeekUI();startAutoSave()
+  showToast(`👋 Bienvenue, ${mgr.name} !`)
+}
+function doLogout(){
+  if(!confirm('Déconnecter ? Pensez à sauvegarder.'))return
+  saveData();stopAutoSave();sessionStorage.removeItem('socofrais_session');currentManager=null;data={}
+  document.getElementById('pwd-input').value=''
+  document.getElementById('login-page').style.display='flex'
+  document.getElementById('app-page').style.display='none'
+  selectedManagerId=null
+  document.getElementById('btn-ms').className='manager-btn'
+  document.getElementById('btn-mo').className='manager-btn'
+  showToast('🔒 Déconnecté')
+}
+
+
+// ══════════════════════════════════════════════════════════
+// DONNÉES
+// ══════════════════════════════════════════════════════════
+function loadManagerData(){
+  const mgr=MANAGERS[currentManager],saved=localStorage.getItem(mgr.dbKey)
+  if(saved){try{data=JSON.parse(saved)}catch(e){data={}}}else{data={}}
+  if(!data.matin)data.matin={}
+  if(!data.aprem)data.aprem={}
+  if(!data.controle)data.controle={}
+  if(!data.historique)data.historique=[]
+  if(!data.noms)data.noms={groupeA:[...DEFAULT_GROUPE_A],groupeB:[...DEFAULT_GROUPE_B]}
+  if(data.teamSwap===undefined)data.teamSwap=false
+  ;[...getGroupeA(),...getGroupeB()].forEach(nom=>{
+    const isMat=getEquipes().matin.includes(nom),store=isMat?data.matin:data.aprem
+    if(!store[nom]){store[nom]={recus:{},especes:0};MODES_MULTI.forEach(m=>{store[nom].recus[m]=[]})}
+    if(!data.controle[nom])data.controle[nom]=0
+  })
+}
+function saveData(){
+  if(!currentManager)return
+  localStorage.setItem(MANAGERS[currentManager].dbKey,JSON.stringify(data))
+  showToast(`💾 Sauvegardé — ${MANAGERS[currentManager].name}`)
+}
+
+// AUTO-SAVE toutes les 2 minutes
+let autoSaveInterval=null
+function startAutoSave(){autoSaveInterval=setInterval(()=>{if(currentManager){localStorage.setItem(MANAGERS[currentManager].dbKey,JSON.stringify(data))}},120000)}
+function stopAutoSave(){if(autoSaveInterval){clearInterval(autoSaveInterval);autoSaveInterval=null}}
+
+function resetData(){
+  if(!confirm('Nouvelle journée ? Les données actuelles seront effacées.'))return
+  const keep={teamSwap:data.teamSwap,historique:data.historique,noms:data.noms}
+  data={matin:{},aprem:{},controle:{},historique:keep.historique||[],teamSwap:keep.teamSwap,noms:keep.noms}
+  loadManagerData();saveData();buildAll();updateWeekUI()
+  showToast('🔄 Nouvelle journée démarrée')
+}
+function setupManagerUI(){
+  const mgr=MANAGERS[currentManager]
+  const av=document.getElementById('user-avatar');av.textContent=mgr.initials;av.style.background=mgr.colorBg;av.style.color=mgr.color
+  document.getElementById('user-name').textContent=mgr.name
+  document.getElementById('user-role').textContent=mgr.role
+  document.getElementById('user-db').textContent=`🗄️ ${mgr.dbKey}`
+  document.getElementById('topbar-sub').textContent=`Connecté(e) : ${mgr.name} — Sauvegarde auto toutes les 2 min`
+}
+
+// ══════════════════════════════════════════════════════════
+// CALCULS
+// ══════════════════════════════════════════════════════════
+function getStore(nom){const isMat=getEquipes().matin.includes(nom);return isMat?data.matin:data.aprem}
+function getTotalMode(nom,mode){
+  const store=getStore(nom);if(!store[nom])return 0
+  if(mode==='Espèces')return parseFloat(store[nom].especes)||0
+  if(!store[nom].recus||!store[nom].recus[mode])return 0
+  return store[nom].recus[mode].reduce((s,r)=>s+(parseFloat(r.montant)||0),0)
+}
+function getTotalCaissiere(nom){return MODES_ALL.reduce((s,m)=>s+getTotalMode(nom,m),0)}
+function getNoms(eq){return getEquipes()[eq]}
+function getTotalEquipe(eq){return getNoms(eq).reduce((s,n)=>s+getTotalCaissiere(n),0)}
+function getTotalMode_all(mode){return[...getGroupeA(),...getGroupeB()].reduce((s,n)=>s+getTotalMode(n,mode),0)}
+function getTotalJour(){return getTotalEquipe('matin')+getTotalEquipe('aprem')}
+function isMatin(nom){return getEquipes().matin.includes(nom)}
+function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' FCFA'}
+function esc(s){return s.replace(/[\s']/g,'_')}
+
+// ══════════════════════════════════════════════════════════
+// ALERTES TEMPS RÉEL
+// ══════════════════════════════════════════════════════════
+function checkDeficits(){
+  const all=[...getGroupeA(),...getGroupeB()]
+  const deficits=all.filter(n=>{
+    const a=getTotalCaissiere(n),r=parseFloat(data.controle[n])||0
+    return a>0&&r>0&&r<a
+  })
+  const count=deficits.length
+  const banner=document.getElementById('alert-banner'),txt=document.getElementById('alert-text')
+  if(!banner)return
+  if(count===0){
+    banner.className='alert-banner alert-ok'
+    txt.textContent='Aucune anomalie — Toutes les caisses sont équilibrées'
+    document.getElementById('deficit-popup').style.display='none'
+    lastDeficitCount=0
+  } else {
+    banner.className='alert-banner alert-err'
+    txt.textContent=`⛔ ALERTE : ${count} caissière(s) en déficit — Vérifier Contrôle Caisse`
+    // Popup si nouveau déficit détecté
+    if(count>lastDeficitCount){
+      const names=deficits.map(n=>{
+        const a=getTotalCaissiere(n),r=parseFloat(data.controle[n])||0
+        return `• ${n} : déficit de ${fmt(a-r)}`
+      }).join('\n')
+      const popup=document.getElementById('deficit-popup')
+      document.getElementById('deficit-popup-body').textContent=names
+      popup.style.display='block'
+      playAlert()
+      setTimeout(()=>{popup.style.display='none'},8000)
+    }
+    lastDeficitCount=count
+  }
+  // Marquer les cards caissières en rouge si déficit
+  all.forEach(nom=>{
+    const card=document.getElementById(`card-${esc(nom)}`)
+    if(card){
+      const a=getTotalCaissiere(nom),r=parseFloat(data.controle[nom])||0
+      if(a>0&&r>0&&r<a)card.classList.add('has-deficit')
+      else card.classList.remove('has-deficit')
+    }
+  })
+}
+
+function playAlert(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)()
+    const osc=ctx.createOscillator(),gain=ctx.createGain()
+    osc.connect(gain);gain.connect(ctx.destination)
+    osc.frequency.value=880;osc.type='sine'
+    gain.gain.setValueAtTime(0.3,ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5)
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.5)
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════════════════
+// HISTORIQUE DES JOURNÉES
+// ══════════════════════════════════════════════════════════
+function cloturerJournee(){
+  const tj=getTotalJour()
+  if(tj===0&&!confirm('Le total est à 0. Voulez-vous quand même clôturer cette journée ?'))return
+  const today=new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})
+  const snap={
+    date:new Date().toISOString().split('T')[0],
+    dateDisplay:today,
+    timestamp:new Date().toISOString(),
+    totalJour:getTotalJour(),
+    totalMatin:getTotalEquipe('matin'),
+    totalAprem:getTotalEquipe('aprem'),
+    modes:MODES_ALL.reduce((obj,m)=>({...obj,[m]:getTotalMode_all(m)}),{}),
+    equipes:{matin:[...getNoms('matin')],aprem:[...getNoms('aprem')]},
+    semaine:getWeekNumber(),
+    matin:JSON.parse(JSON.stringify(data.matin)),
+    aprem:JSON.parse(JSON.stringify(data.aprem)),
+    controle:JSON.parse(JSON.stringify(data.controle))
+  }
+  if(!data.historique)data.historique=[]
+  // Remplacer si même date
+  const idx=data.historique.findIndex(h=>h.date===snap.date)
+  if(idx>=0)data.historique[idx]=snap
+  else data.historique.unshift(snap)
+  // Garder max 90 jours
+  if(data.historique.length>90)data.historique=data.historique.slice(0,90)
+  saveData();showToast('📅 Journée clôturée et sauvegardée dans l\'historique')
+  if(document.getElementById('panel-historique').classList.contains('active'))buildHistorique()
+}
+
+function buildHistorique(){
+  const hist=data.historique||[]
+  document.getElementById('hist-count').textContent=`${hist.length} journée(s) enregistrée(s)`
+  renderHistList(hist)
+}
+
+function renderHistList(hist){
+  const container=document.getElementById('hist-list')
+  if(hist.length===0){container.innerHTML=`<div class="hist-empty">📭 Aucune journée enregistrée.<br>Cliquez sur "Clôturer la journée" pour commencer.</div>`;return}
+  container.innerHTML=hist.map((h,i)=>`
+    <div class="hist-card">
+      <div>
+        <div class="hist-date">📅 ${h.dateDisplay||h.date}</div>
+        <div class="hist-meta" style="margin-top:5px">
+          <div class="hist-stat">Total : <span>${Math.round(h.totalJour).toLocaleString('fr-FR')} FCFA</span></div>
+          <div class="hist-stat">☀️ Matin : <span>${Math.round(h.totalMatin).toLocaleString('fr-FR')}</span></div>
+          <div class="hist-stat">🌙 Soir : <span>${Math.round(h.totalAprem).toLocaleString('fr-FR')}</span></div>
+          <div class="hist-stat">Semaine : <span>${h.semaine}</span></div>
+        </div>
+      </div>
+      <div class="hist-actions">
+        <button class="btn btn-info btn-sm" onclick="viewHistDetail(${i})">👁️ Voir</button>
+        <button class="btn btn-warning btn-sm" onclick="exportPDFHist(${i})">📄 PDF</button>
+        <button class="btn btn-secondary btn-sm" onclick="deleteHist(${i})" style="color:#f87171">🗑️</button>
+      </div>
+    </div>`).join('')
+}
+
+function filterHist(q){
+  const hist=data.historique||[]
+  if(!q){renderHistList(hist);return}
+  renderHistList(hist.filter(h=>(h.dateDisplay||h.date).toLowerCase().includes(q.toLowerCase())))
+}
+
+function viewHistDetail(idx){
+  const h=data.historique[idx]
+  currentHistDetail=h
+  document.getElementById('hist-detail-title').textContent=`📅 Journée du ${h.dateDisplay||h.date}`
+  let html=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">`
+  html+=`<div class="synth-card"><div class="synth-lbl">Total Journée</div><div class="synth-val" style="color:#f87171;font-size:20px">${Math.round(h.totalJour).toLocaleString('fr-FR')}</div><div style="font-size:10px;color:var(--text3)">FCFA</div></div>`
+  html+=`<div class="synth-card"><div class="synth-lbl">☀️ Matin</div><div class="synth-val" style="color:#38bdf8;font-size:20px">${Math.round(h.totalMatin).toLocaleString('fr-FR')}</div></div>`
+  html+=`<div class="synth-card"><div class="synth-lbl">🌙 Après-midi</div><div class="synth-val" style="color:var(--accent);font-size:20px">${Math.round(h.totalAprem).toLocaleString('fr-FR')}</div></div>`
+  html+=`</div>`
+  html+=`<div style="overflow:auto"><table class="recap-table" style="margin-bottom:12px"><thead><tr><th>Mode</th><th>Total</th></tr></thead><tbody>`
+  MODES_ALL.forEach(m=>{html+=`<tr><td style="font-weight:600;color:${MODES_CLR[m]}">${MODES_ICO[m]} ${m}</td><td>${Math.round(h.modes[m]||0).toLocaleString('fr-FR')}</td></tr>`})
+  html+=`</tbody></table></div>`
+  openModal('modal-hist-detail')
+  document.getElementById('hist-detail-content').innerHTML=html
+}
+
+function deleteHist(idx){
+  if(!confirm('Supprimer cette journée de l\'historique ?'))return
+  data.historique.splice(idx,1);saveData();buildHistorique();showToast('🗑️ Journée supprimée')
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT PDF
+// ══════════════════════════════════════════════════════════
+function exportPDF(histData){
+  const h=histData
+  const today=new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})
+  const mgr=MANAGERS[currentManager]
+
+  const tj=h?h.totalJour:getTotalJour()
+  const tm=h?h.totalMatin:getTotalEquipe('matin')
+  const ta=h?h.totalAprem:getTotalEquipe('aprem')
+  const dateStr=h?h.dateDisplay:today
+  const matNoms=h?h.equipes.matin:getNoms('matin')
+  const apNoms=h?h.equipes.aprem:getNoms('aprem')
+
+  const getModeVal=(nom,mode,src)=>{
+    if(!src)return getTotalMode(nom,mode)
+    const isMat=src.equipes.matin.includes(nom)
+    const store=isMat?src.matin:src.aprem
+    if(!store[nom])return 0
+    if(mode==='Espèces')return parseFloat(store[nom].especes)||0
+    if(!store[nom].recus||!store[nom].recus[mode])return 0
+    return store[nom].recus[mode].reduce((s,r)=>s+(parseFloat(r.montant)||0),0)
+  }
+  const getCaissiereTotal=(nom,src)=>MODES_ALL.reduce((s,m)=>s+getModeVal(nom,m,src),0)
+
+  const win=window.open('','_blank')
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>SOCOFRAIS ANGRE — Rapport du ${dateStr}</title>
+  <style>
+    body{font-family:Arial,sans-serif;margin:0;padding:20px;color:#1a1a2e;font-size:11px}
+    .header{text-align:center;border-bottom:3px solid #00c896;padding-bottom:12px;margin-bottom:16px}
+    .header h1{font-size:20px;color:#0D2137;margin:0 0 4px}
+    .header p{margin:2px 0;color:#555;font-size:11px}
+    .kpi-row{display:flex;gap:8px;margin-bottom:14px}
+    .kpi-box{flex:1;border:1px solid #e0e0e0;border-radius:8px;padding:10px;text-align:center}
+    .kpi-val{font-size:18px;font-weight:800;margin:3px 0}
+    .kpi-lbl{font-size:9px;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+    table{width:100%;border-collapse:collapse;margin-bottom:14px}
+    th{background:#0D2137;color:#fff;padding:6px 7px;font-size:10px;text-align:center}
+    td{padding:5px 7px;border-bottom:1px solid #f0f0f0;text-align:center;font-size:10px}
+    tr:hover td{background:#f9f9f9}
+    .eq-hdr td{background:#1565C0;color:#fff;font-weight:700;text-align:center}
+    .eq-hdr-a td{background:#2E7D32;color:#fff;font-weight:700;text-align:center}
+    .subtot td{background:#e3f2fd;font-weight:700}
+    .subtot-a td{background:#e8f5e9;font-weight:700}
+    .grandtot td{background:#ffebee;font-weight:800;font-size:12px}
+    .nom{text-align:left!important;font-weight:600}
+    .footer{border-top:2px solid #00c896;padding-top:10px;display:flex;justify-content:space-between;font-size:10px;color:#888;margin-top:16px}
+    .section-title{font-size:13px;font-weight:800;color:#0D2137;margin:14px 0 6px;border-left:3px solid #00c896;padding-left:8px}
+    @media print{body{margin:0;padding:12px}}
+  </style></head><body>
+  <div class="header">
+    <h1>🏪 SOCOFRAIS ANGRE</h1>
+    <p>Rapport de caisse journalier</p>
+    <p><strong>Date :</strong> ${dateStr} &nbsp;|&nbsp; <strong>Gestionnaire :</strong> ${mgr.name} &nbsp;|&nbsp; <strong>Semaine N° ${h?h.semaine:getWeekNumber()}</strong></p>
+  </div>
+
+  <div class="kpi-row">
+    ${MODES_ALL.map(m=>`<div class="kpi-box"><div class="kpi-lbl">${MODES_ICO[m]} ${m}</div><div class="kpi-val" style="color:${MODES_CLR[m]}">${Math.round(h?h.modes[m]:getTotalMode_all(m)).toLocaleString('fr-FR')}</div></div>`).join('')}
+    <div class="kpi-box" style="border-color:#ef4444"><div class="kpi-lbl">🏆 TOTAL JOURNÉE</div><div class="kpi-val" style="color:#ef4444">${Math.round(tj).toLocaleString('fr-FR')}</div></div>
+  </div>
+
+  <div class="section-title">Détail par Caissière</div>
+  <table>
+    <thead><tr><th>#</th><th style="text-align:left">Caissière</th><th>Équipe</th>${MODES_ALL.map(m=>`<th>${MODES_ICO[m]}</th>`).join('')}<th>TOTAL</th></tr></thead>
+    <tbody>
+    <tr class="eq-hdr"><td colspan="${4+MODES_ALL.length}" style="text-align:center">☀️ ÉQUIPE MATIN — Groupe ${matNoms===getGroupeA()?'A':'B'}</td></tr>
+    ${matNoms.map((nom,i)=>{
+      const t=getCaissiereTotal(nom,h)
+      return `<tr><td>${i+1}</td><td class="nom">${nom}</td><td>Matin</td>${MODES_ALL.map(m=>`<td>${Math.round(getModeVal(nom,m,h)||0)>0?Math.round(getModeVal(nom,m,h)).toLocaleString('fr-FR'):'-'}</td>`).join('')}<td style="font-weight:700">${Math.round(t).toLocaleString('fr-FR')}</td></tr>`
+    }).join('')}
+    <tr class="subtot"><td colspan="3" style="text-align:right">SOUS-TOTAL MATIN</td>${MODES_ALL.map(m=>`<td>${Math.round(matNoms.reduce((s,n)=>s+getModeVal(n,m,h),0)).toLocaleString('fr-FR')}</td>`).join('')}<td>${Math.round(tm).toLocaleString('fr-FR')}</td></tr>
+    <tr class="eq-hdr-a"><td colspan="${4+MODES_ALL.length}" style="text-align:center">🌙 ÉQUIPE APRÈS-MIDI — Solde reçu : ${Math.round(tm).toLocaleString('fr-FR')} FCFA</td></tr>
+    ${apNoms.map((nom,i)=>{
+      const t=getCaissiereTotal(nom,h)
+      return `<tr><td>${i+1}</td><td class="nom">${nom}</td><td>Après-midi</td>${MODES_ALL.map(m=>`<td>${Math.round(getModeVal(nom,m,h)||0)>0?Math.round(getModeVal(nom,m,h)).toLocaleString('fr-FR'):'-'}</td>`).join('')}<td style="font-weight:700">${Math.round(t).toLocaleString('fr-FR')}</td></tr>`
+    }).join('')}
+    <tr class="subtot-a"><td colspan="3" style="text-align:right">SOUS-TOTAL APRÈS-MIDI</td>${MODES_ALL.map(m=>`<td>${Math.round(apNoms.reduce((s,n)=>s+getModeVal(n,m,h),0)).toLocaleString('fr-FR')}</td>`).join('')}<td>${Math.round(ta).toLocaleString('fr-FR')}</td></tr>
+    <tr class="grandtot"><td colspan="3" style="text-align:right">★ GRAND TOTAL JOURNÉE</td>${MODES_ALL.map(m=>`<td>${Math.round((h?h.modes[m]:getTotalMode_all(m))).toLocaleString('fr-FR')}</td>`).join('')}<td>${Math.round(tj).toLocaleString('fr-FR')}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <span>SOCOFRAIS ANGRE — Rapport généré le ${new Date().toLocaleString('fr-FR')}</span>
+    <span>Gestionnaire : ${mgr.name}</span>
+    <div style="margin-top:20px;text-align:center"><p>Signature gestionnaire : ___________________________</p></div>
+  </div>
+  <script>setTimeout(()=>{window.print()},500)<\/script>
+  </body></html>`)
+  win.document.close()
+}
+function exportPDFHist(idx){exportPDF(data.historique[idx])}
+
+// ══════════════════════════════════════════════════════════
+// ÉDITION DES NOMS
+// ══════════════════════════════════════════════════════════
+function openEditNoms(){
+  const ga=getGroupeA(),gb=getGroupeB()
+  let html=''
+  ga.forEach((nom,i)=>{
+    html+=`<div class="edit-item">
+      <div class="edit-num">${i+1}</div>
+      <div class="edit-equipe badge-m" style="font-size:9px">Grp A</div>
+      <input class="edit-input" type="text" value="${nom}" data-group="A" data-idx="${i}" placeholder="Nom caissière...">
+    </div>`
+  })
+  gb.forEach((nom,i)=>{
+    html+=`<div class="edit-item">
+      <div class="edit-num">${i+1}</div>
+      <div class="edit-equipe badge-a" style="font-size:9px">Grp B</div>
+      <input class="edit-input" type="text" value="${nom}" data-group="B" data-idx="${i}" placeholder="Nom caissière...">
+    </div>`
+  })
+  document.getElementById('edit-noms-grid').innerHTML=html
+  openModal('modal-noms')
+}
+
+function saveNoms(){
+  const inputs=document.querySelectorAll('.edit-input')
+  const newA=[...DEFAULT_GROUPE_A],newB=[...DEFAULT_GROUPE_B]
+  inputs.forEach(inp=>{
+    const g=inp.dataset.group,idx=parseInt(inp.dataset.idx),val=inp.value.trim()
+    if(val){if(g==='A')newA[idx]=val;else newB[idx]=val}
+  })
+  if(!data.noms)data.noms={}
+  data.noms.groupeA=newA;data.noms.groupeB=newB
+  // Migrer les données si les noms ont changé
+  saveData();buildAll();closeModal('modal-noms')
+  showToast('✅ Noms des caissières mis à jour')
+}
+
+// ══════════════════════════════════════════════════════════
+// MODALES
+// ══════════════════════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open')
+})
+
+// ══════════════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════════════
+function updateDate(){
+  const now=new Date()
+  const str=now.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})
+  const time=now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
+  const sd=document.getElementById('sidebar-date');if(sd)sd.innerHTML=`📅 ${str}<br>⏰ ${time}`
+  const td=document.getElementById('topbar-date');if(td)td.textContent=str
+}
+const PANELS_MAP={dashboard:'Tableau de Bord',saisie:'Saisie des Reçus',recap:'Récapitulatif',controle:'Contrôle Caisse',historique:'Historique'}
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'))
+  document.getElementById('panel-'+id).classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')===`showPanel('${id}')`)n.classList.add('active')})
+  document.getElementById('topbar-title').textContent=PANELS_MAP[id]
+  if(id==='dashboard')buildDashboard()
+  if(id==='recap')buildRecap()
+  if(id==='controle')buildControle()
+  if(id==='historique')buildHistorique()
+  checkDeficits()
+}
+function showToast(msg){
+  const old=document.querySelector('.toast');if(old)old.remove()
+  const t=document.createElement('div');t.className='toast';t.textContent=msg
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2500)
+}
+
+// ══════════════════════════════════════════════════════════
+// SAISIE
+// ══════════════════════════════════════════════════════════
+function buildSaisie(){
+  const eq=getEquipes()
+  document.getElementById('saisie-header-matin').innerHTML=
+    `☀️ Équipe Matin — 07h00 à 15h00 <span class="section-badge">Groupe ${eq.matin===getGroupeA()?'A':'B'} — ${eq.matin.length} Caissières</span><button class="btn-reset-caissiere" style="margin-left:auto;font-size:10px;padding:2px 8px" onclick="resetEquipe('matin')" title="Réinitialiser toute l'équipe matin">🗑️ Réinit. équipe</button>`
+  document.getElementById('saisie-header-aprem').innerHTML=
+    `🌙 Équipe Après-midi — 15h00 à 23h00 <span class="section-badge">Monte avec solde matin</span><button class="btn-reset-caissiere" style="margin-left:auto;font-size:10px;padding:2px 8px" onclick="resetEquipe('aprem')" title="Réinitialiser toute l'équipe après-midi">🗑️ Réinit. équipe</button>`
+  buildEquipe('matin',document.getElementById('saisie-matin'),eq.matin)
+  buildEquipe('aprem',document.getElementById('saisie-aprem'),eq.aprem)
+  updateSoldeBanner()
+}
+function buildEquipe(eq,container,noms){container.innerHTML='';noms.forEach(nom=>container.appendChild(buildCaissiereCard(nom,eq)))}
+
+function ensureStore(nom){
+  const store=getStore(nom)
+  if(!store[nom]){store[nom]={recus:{},especes:0};MODES_MULTI.forEach(m=>{store[nom].recus[m]=[]})}
+  MODES_MULTI.forEach(m=>{if(!store[nom].recus[m])store[nom].recus[m]=[]})
+}
+
+function buildCaissiereCard(nom,equipe){
+  ensureStore(nom)
+  const mat=equipe==='matin',total=getTotalCaissiere(nom)
+  const ini=nom.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()
+  const card=document.createElement('div');card.className='caissiere-card';card.id=`card-${esc(nom)}`
+  const store=getStore(nom)
+  let bodyHTML=`<div class="caissiere-body">`
+  MODES_MULTI.forEach(mode=>{
+    const modeTotal=getTotalMode(nom,mode),cssClass=MODES_CSS[mode],ico=MODES_ICO[mode]
+    const recus=store[nom].recus[mode]||[]
+    const modeId=`mode-${esc(nom)}-${esc(mode)}`
+    bodyHTML+=`<div class="mode-section" id="msec-${esc(nom)}-${esc(mode)}">
+      <div class="mode-header ${cssClass}" onclick="toggleMode('${modeId}')">
+        <span>${ico} ${mode} <small style="opacity:0.5;font-weight:400">${recus.length} reçu${recus.length>1?'s':''}</small></span>
+        <span class="mode-total" id="mt-${esc(nom)}-${esc(mode)}">${fmt(modeTotal)}</span>
+      </div>
+      <div class="collapse open" id="${modeId}"><div class="mode-body">
+        <table class="recu-table" id="rt-${esc(nom)}-${esc(mode)}">
+          <thead><tr><th class="recu-num">#</th><th style="width:130px">N° Reçu</th><th style="width:110px;text-align:right">Montant (FCFA)</th><th style="width:70px">Heure</th><th style="width:36px"></th></tr></thead>
+          <tbody id="rb-${esc(nom)}-${esc(mode)}">${recus.map((r,j)=>recuRow(nom,mode,j,r)).join('')}</tbody>
+        </table>
+        <button class="btn-add-recu" onclick="addRecu('${equipe}','${nom}','${mode}')">➕ Ajouter un reçu ${mode}</button>
+      </div></div></div>`
+  })
+  const espVal=store[nom].especes||0
+  bodyHTML+=`<div class="mode-section" id="msec-${esc(nom)}-Especes">
+    <div class="mode-header mode-esp" onclick="toggleMode('mesp-${esc(nom)}')">
+      <span>💵 Espèces — Versement unique</span>
+      <span class="mode-total" id="mt-${esc(nom)}-Especes">${fmt(espVal)}</span>
+    </div>
+    <div class="collapse open" id="mesp-${esc(nom)}"><div class="especes-row">
+      <div class="especes-label">💵 Montant total des espèces versées</div>
+      <input class="especes-input" type="number" value="${espVal}" min="0" oninput="updateEspeces('${equipe}','${nom}',this.value)">
+    </div></div></div></div>`
+  card.innerHTML=`<div class="caissiere-header" onclick="toggleCard('${esc(nom)}')">
+    <div class="caissiere-name">
+      <span style="width:24px;height:24px;border-radius:50%;background:${mat?'rgba(14,165,233,0.2)':'rgba(0,200,150,0.15)'};
+        color:${mat?'#38bdf8':'var(--accent)'};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800">${ini}</span>
+      ${nom} <span class="${mat?'badge-m':'badge-a'}">${mat?'Matin':'A-midi'}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px" onclick="event.stopPropagation()">
+      <div class="caissiere-total" id="tot-${esc(nom)}">${fmt(total)}</div>
+      <button class="btn-reset-caissiere" title="Effacer les données de cette caissière" onclick="resetCaissiere('${equipe}','${nom}')">🗑️</button>
+      <span style="color:var(--text3);font-size:10px" onclick="toggleCard('${esc(nom)}')">▼</span>
+    </div>
+  </div>`
+  const body=document.createElement('div');body.className='collapse open';body.id=`body-${esc(nom)}`;body.innerHTML=bodyHTML
+  card.appendChild(body);return card
+}
+
+function recuRow(nom,mode,j,recu){
+  return `<tr id="rrow-${esc(nom)}-${esc(mode)}-${j}">
+    <td class="recu-num">${mode.substring(0,2).toUpperCase()}${String(j+1).padStart(2,'0')}</td>
+    <td><input class="ri ri-ref" type="text" value="${recu.ref||''}" placeholder="Référence..." onchange="updateRecu('${esc(nom)}','${mode}',${j},'ref',this.value)"></td>
+    <td style="text-align:right"><input class="ri ri-mont" type="number" value="${recu.montant||0}" min="0" oninput="updateRecu('${esc(nom)}','${mode}',${j},'montant',this.value)"></td>
+    <td><input class="ri ri-heure" type="time" value="${recu.heure||''}" onchange="updateRecu('${esc(nom)}','${mode}',${j},'heure',this.value)"></td>
+    <td><button class="btn-del-recu" onclick="delRecu('${esc(nom)}','${mode}',${j})">✕</button></td>
+  </tr>`
+}
+function addRecu(equipe,nom,mode){
+  ensureStore(nom);const store=getStore(nom)
+  store[nom].recus[mode].push({ref:'',montant:0,heure:''})
+  const j=store[nom].recus[mode].length-1
+  const tbody=document.getElementById(`rb-${esc(nom)}-${esc(mode)}`)
+  if(tbody){tbody.insertAdjacentHTML('beforeend',recuRow(nom,mode,j,store[nom].recus[mode][j]));const nr=document.getElementById(`rrow-${esc(nom)}-${esc(mode)}-${j}`);if(nr)nr.querySelector('.ri-ref').focus()}
+  updateModeHeader(nom,mode);updateSoldeBanner();saveData()
+}
+function delRecu(nomEsc,mode,idx){
+  const nom=nomEsc.replace(/_/g,' '),store=getStore(nom)
+  if(!store[nom]||!store[nom].recus[mode])return
+  store[nom].recus[mode].splice(idx,1)
+  const tbody=document.getElementById(`rb-${esc(nom)}-${esc(mode)}`)
+  if(tbody)tbody.innerHTML=store[nom].recus[mode].map((r,j)=>recuRow(nom,mode,j,r)).join('')
+  updateModeHeader(nom,mode);refreshTotals(nom);saveData()
+}
+function updateRecu(nomEsc,mode,idx,field,val){
+  const nom=nomEsc.replace(/_/g,' ');ensureStore(nom);const store=getStore(nom)
+  if(!store[nom].recus[mode]||!store[nom].recus[mode][idx])return
+  store[nom].recus[mode][idx][field]=field==='montant'?parseFloat(val)||0:val
+  updateModeHeader(nom,mode);refreshTotals(nom);saveData()
+}
+function updateEspeces(equipe,nom,val){
+  ensureStore(nom);const store=getStore(nom);store[nom].especes=parseFloat(val)||0
+  const mt=document.getElementById(`mt-${esc(nom)}-Especes`);if(mt)mt.textContent=fmt(store[nom].especes)
+  refreshTotals(nom);saveData()
+}
+function updateModeHeader(nom,mode){
+  const total=getTotalMode(nom,mode),mt=document.getElementById(`mt-${esc(nom)}-${esc(mode)}`);if(mt)mt.textContent=fmt(total)
+  const store=getStore(nom),nb=store[nom]?.recus[mode]?.length||0
+  const header=document.querySelector(`#msec-${esc(nom)}-${esc(mode)} .mode-header small`);if(header)header.textContent=`${nb} reçu${nb>1?'s':''}`
+}
+function refreshTotals(nom){
+  const t=document.getElementById(`tot-${esc(nom)}`);if(t)t.textContent=fmt(getTotalCaissiere(nom))
+  updateSoldeBanner();checkDeficits()
+  if(document.getElementById('panel-dashboard')?.classList.contains('active'))buildDashboard()
+}
+function updateSoldeBanner(){const el=document.getElementById('solde-amount');if(el)el.textContent=fmt(getTotalEquipe('matin'))}
+function toggleCard(id){const el=document.getElementById(`body-${id}`);if(el)el.classList.toggle('open')}
+function toggleMode(id){const el=document.getElementById(id);if(el)el.classList.toggle('open')}
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════
+function buildDashboard(){
+  const tm=getTotalEquipe('matin'),ta=getTotalEquipe('aprem'),tj=getTotalJour()
+  document.getElementById('kpi-grid').innerHTML=[
+    {ico:'💳',label:'Orange Money',val:getTotalMode_all('Orange Money'),clr:'#fb923c'},
+    {ico:'🖥️',label:'TPE',val:getTotalMode_all('TPE'),clr:'#38bdf8'},
+    {ico:'🌊',label:'Wave',val:getTotalMode_all('Wave'),clr:'#22d3ee'},
+    {ico:'🟠',label:'Prizy',val:getTotalMode_all('Prizy'),clr:'#c084fc'},
+    {ico:'💵',label:'Espèces',val:getTotalMode_all('Espèces'),clr:'#00c896'},
+    {ico:'🏆',label:'TOTAL JOUR',val:tj,clr:'#ef4444'},
+  ].map(k=>`<div class="kpi-card" style="border-color:${k.clr}22"><div class="kpi-icon">${k.ico}</div><div class="kpi-label">${k.label}</div><div class="kpi-value" style="color:${k.clr}">${Math.round(k.val).toLocaleString('fr-FR')}</div></div>`).join('')
+  const mx=Math.max(...MODES_ALL.map(m=>getTotalMode_all(m)),1)
+  document.getElementById('bar-chart').innerHTML=MODES_ALL.map(mode=>{
+    const v=getTotalMode_all(mode),pct=(v/mx*100).toFixed(1),clr=MODES_CLR[mode]
+    return `<div class="bar-row"><div class="bar-label">${MODES_ICO[mode]} ${mode}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${clr}">${pct>15?`<span>${Math.round(v/1000)}K</span>`:''}</div></div><div class="bar-amount" style="color:${clr}">${Math.round(v).toLocaleString('fr-FR')}</div></div>`
+  }).join('')
+  const tot=Math.max(tm+ta,1),cx=60,cy=60,r=46
+  const angle=tm/tot*2*Math.PI,x1=cx+r*Math.sin(0),y1=cy-r*Math.cos(0),x2=cx+r*Math.sin(angle),y2=cy-r*Math.cos(angle),large=angle>Math.PI?1:0
+  document.getElementById('pie-svg').innerHTML=tot===1?`<circle cx="60" cy="60" r="46" fill="#1A3A5C"/>`:
+    `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z" fill="#1565C0" opacity="0.9"/>
+     <path d="M${cx},${cy} L${x2},${y2} A${r},${r} 0 ${1-large},1 ${x1},${y1} Z" fill="#00c896" opacity="0.9"/>
+     <text x="60" y="64" text-anchor="middle" fill="white" font-size="9" font-weight="700">TOTAL</text>
+     <text x="60" y="74" text-anchor="middle" fill="#8ba4c0" font-size="7">${Math.round(tot).toLocaleString('fr-FR')}</text>`
+  document.getElementById('pie-legend').innerHTML=`
+    <div class="pie-legend-item"><div class="pie-dot" style="background:#1565C0"></div><div><div style="font-size:10px;font-weight:600;color:#38bdf8">☀️ Matin</div><div style="font-family:var(--mono);font-size:10px">${Math.round(tm).toLocaleString('fr-FR')}</div><div style="font-size:9px;color:var(--text3)">${(tm/tot*100).toFixed(1)}%</div></div></div>
+    <div class="pie-legend-item"><div class="pie-dot" style="background:#00c896"></div><div><div style="font-size:10px;font-weight:600;color:var(--accent)">🌙 Après-midi</div><div style="font-family:var(--mono);font-size:10px">${Math.round(ta).toLocaleString('fr-FR')}</div><div style="font-size:9px;color:var(--text3)">${(ta/tot*100).toFixed(1)}%</div></div></div>`
+  const allT=[...getGroupeA(),...getGroupeB()].map(n=>({nom:n,val:getTotalCaissiere(n),mat:isMatin(n)}))
+  const mxP=Math.max(...allT.map(x=>x.val),1)
+  document.getElementById('perf-chart').innerHTML=`<div class="bar-chart">`+allT.map(x=>{
+    const pct=(x.val/mxP*100).toFixed(1),clr=x.mat?'#38bdf8':'#00c896',ini=x.nom.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()
+    return `<div class="bar-row" style="grid-template-columns:130px 1fr 90px">
+      <div class="bar-label" style="display:flex;align-items:center;gap:5px"><span style="width:17px;height:17px;border-radius:50%;background:${clr}22;color:${clr};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800">${ini}</span><span style="font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.nom.split(' ')[0]}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${clr}88">${pct>12?`<span style="color:${clr}">${Math.round(x.val/1000)}K</span>`:''}</div></div>
+      <div class="bar-amount" style="color:${clr};font-size:10px">${Math.round(x.val).toLocaleString('fr-FR')}</div>
+    </div>`
+  }).join('')+`</div>`
+  document.getElementById('recap-modes-table').innerHTML=
+    `<thead><tr><th>Mode</th><th>Total Matin</th><th>Total Après-midi</th><th>Total Journée</th><th>%</th></tr></thead><tbody>`+
+    MODES_ALL.map(mode=>{
+      const m=getTotalMode_all(mode),pct=tj>0?(m/tj*100).toFixed(1):0,clr=MODES_CLR[mode]
+      return `<tr><td style="font-weight:600;color:${clr}">${MODES_ICO[mode]} ${mode}</td><td>${Math.round(getNoms('matin').reduce((s,n)=>s+getTotalMode(n,mode),0)).toLocaleString('fr-FR')}</td><td>${Math.round(getNoms('aprem').reduce((s,n)=>s+getTotalMode(n,mode),0)).toLocaleString('fr-FR')}</td><td style="color:${clr};font-weight:700">${Math.round(m).toLocaleString('fr-FR')}</td><td>${pct}%</td></tr>`
+    }).join('')+
+    `<tr class="grandtotal-row"><td>★ TOTAL</td><td>${Math.round(tm).toLocaleString('fr-FR')}</td><td>${Math.round(ta).toLocaleString('fr-FR')}</td><td style="font-size:13px">${Math.round(tj).toLocaleString('fr-FR')}</td><td>100%</td></tr></tbody>`
+}
+
+// ══════════════════════════════════════════════════════════
+// RÉCAP
+// ══════════════════════════════════════════════════════════
+function buildRecap(){
+  const stm=getTotalEquipe('matin'),matNoms=getNoms('matin'),apNoms=getNoms('aprem'),eq=getEquipes()
+  let html=`<div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:13px;color:var(--accent3);font-weight:600">💰 Solde transmis à l'après-midi</div>
+    <div style="font-family:var(--mono);font-size:18px;font-weight:800;color:var(--accent3)">${fmt(stm)}</div>
+  </div><div style="overflow:auto"><table class="recap-table"><thead><tr><th>#</th><th style="text-align:left">Caissière</th><th>Équipe</th>${MODES_ALL.map(m=>`<th>${MODES_ICO[m]}</th>`).join('')}<th>TOTAL</th></tr></thead><tbody>`
+  html+=`<tr><td colspan="${4+MODES_ALL.length}" style="background:rgba(14,165,233,0.1);color:#38bdf8;font-weight:700;padding:6px;text-align:center">☀️ ÉQUIPE MATIN — Groupe ${eq.matin===getGroupeA()?'A':'B'}</td></tr>`
+  let sm={};MODES_ALL.forEach(m=>sm[m]=0)
+  matNoms.forEach((nom,i)=>{const t=getTotalCaissiere(nom);html+=`<tr><td>${i+1}</td><td class="recap-nom">${nom}</td><td><span class="badge-m">Matin</span></td>`;MODES_ALL.forEach(m=>{const v=getTotalMode(nom,m);sm[m]+=v;html+=`<td>${v>0?Math.round(v).toLocaleString('fr-FR'):'-'}</td>`});html+=`<td class="recap-total">${Math.round(t).toLocaleString('fr-FR')}</td></tr>`})
+  html+=`<tr class="subtotal-row"><td colspan="3" style="text-align:right;color:#38bdf8">SOUS-TOTAL MATIN</td>`;MODES_ALL.forEach(m=>html+=`<td style="color:#38bdf8">${Math.round(sm[m]).toLocaleString('fr-FR')}</td>`);html+=`<td style="color:#38bdf8">${Math.round(stm).toLocaleString('fr-FR')}</td></tr>`
+  html+=`<tr><td colspan="${4+MODES_ALL.length}" style="background:rgba(0,200,150,0.08);color:var(--accent);font-weight:700;padding:6px;text-align:center">🌙 ÉQUIPE APRÈS-MIDI — Solde reçu : ${fmt(stm)}</td></tr>`
+  let sa={};MODES_ALL.forEach(m=>sa[m]=0)
+  apNoms.forEach((nom,i)=>{const t=getTotalCaissiere(nom),s=stm/9+t;html+=`<tr><td>${i+1}</td><td class="recap-nom">${nom}</td><td><span class="badge-a">A-midi</span></td>`;MODES_ALL.forEach(m=>{const v=getTotalMode(nom,m);sa[m]+=v;html+=`<td>${v>0?Math.round(v).toLocaleString('fr-FR'):'-'}</td>`});html+=`<td class="recap-total">${Math.round(t).toLocaleString('fr-FR')}</td></tr>`})
+  const sta=getTotalEquipe('aprem')
+  html+=`<tr class="subtotal-row"><td colspan="3" style="text-align:right;color:var(--accent)">SOUS-TOTAL APRÈS-MIDI</td>`;MODES_ALL.forEach(m=>html+=`<td style="color:var(--accent)">${Math.round(sa[m]).toLocaleString('fr-FR')}</td>`);html+=`<td style="color:var(--accent)">${Math.round(sta).toLocaleString('fr-FR')}</td></tr>`
+  const gt=getTotalJour()
+  html+=`<tr class="grandtotal-row"><td colspan="3" style="text-align:right">★ GRAND TOTAL</td>`;MODES_ALL.forEach(m=>html+=`<td>${Math.round(sm[m]+sa[m]).toLocaleString('fr-FR')}</td>`);html+=`<td style="font-size:13px">${Math.round(gt).toLocaleString('fr-FR')}</td></tr></tbody></table></div>`
+  document.getElementById('recap-content').innerHTML=html
+}
+
+// ══════════════════════════════════════════════════════════
+// CONTRÔLE
+// ══════════════════════════════════════════════════════════
+function buildControle(){
+  const all=[...getGroupeA(),...getGroupeB()];let def=0,exc=0,ok2=0
+  let html=`<div style="overflow:auto"><table class="ctrl-table"><thead><tr><th>#</th><th>Caissière</th><th>Équipe</th><th>Nb Reçus</th><th>Attendu</th><th>Réel (comptage)</th><th>Écart</th><th>Statut</th><th>Action</th></tr></thead><tbody>`
+  all.forEach((nom,i)=>{
+    const mat=isMatin(nom),attendu=getTotalCaissiere(nom),reel=parseFloat(data.controle[nom])||0,ecart=reel-attendu
+    const store=getStore(nom),nb=MODES_MULTI.reduce((s,m)=>s+(store[nom]?.recus[m]?.filter(r=>r.montant>0).length||0),0)
+    let statut,action,sc,ec
+    if(attendu===0){statut='⬜ En attente';action='Attendre fin de service';sc='status-wait';ec=''}
+    else if(reel===0){statut='⬜ En attente';action='Saisir le montant compté';sc='status-wait';ec=''}
+    else if(ecart===0){statut='✅ Équilibré';action='RAS';sc='status-ok';ec='ecart-ok';ok2++}
+    else if(ecart>0){statut='🟡 Excédent';action=`Excédent ${fmt(Math.abs(ecart))}`;sc='status-exc';ec='ecart-pos';exc++}
+    else{statut='🔴 DÉFICIT';action=`⚠️ URGENT — Déficit ${fmt(Math.abs(ecart))}`;sc='status-def';ec='ecart-neg';def++}
+    html+=`<tr style="${ecart<0&&reel>0?'background:rgba(239,68,68,0.04)':''}">
+      <td>${i+1}</td><td style="font-weight:600;color:${mat?'#38bdf8':'var(--accent)'}">${nom}</td>
+      <td><span class="${mat?'badge-m':'badge-a'}">${mat?'Matin':'A-midi'}</span></td>
+      <td style="font-family:var(--mono);color:var(--text3)">${nb}</td>
+      <td class="ctrl-attendu">${Math.round(attendu).toLocaleString('fr-FR')}</td>
+      <td class="ctrl-reel"><input type="number" value="${reel||0}" min="0" oninput="updateControle('${nom}',this.value)" style="${ecart<0&&reel>0?'border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.1);color:#f87171':''}"></td>
+      <td class="ctrl-ecart ${ec}">${reel>0&&attendu>0?(ecart>=0?'+':'')+Math.round(ecart).toLocaleString('fr-FR'):'-'}</td>
+      <td><span class="status-badge ${sc}">${statut}</span></td>
+      <td style="font-size:10px;color:var(--text2)">${action}</td>
+    </tr>`
+  })
+  html+=`</tbody></table></div>`
+  const ta=all.reduce((s,n)=>s+getTotalCaissiere(n),0),tr2=all.reduce((s,n)=>s+(parseFloat(data.controle[n])||0),0),eg=tr2-ta
+  html+=`<div class="synth-grid">
+    <div class="synth-card"><div class="synth-lbl">Total Attendu</div><div class="synth-val" style="color:var(--accent2)">${Math.round(ta).toLocaleString('fr-FR')}</div><div style="font-size:10px;color:var(--text3)">FCFA</div></div>
+    <div class="synth-card"><div class="synth-lbl">Total Réel</div><div class="synth-val" style="color:var(--accent)">${Math.round(tr2).toLocaleString('fr-FR')}</div><div style="font-size:10px;color:var(--text3)">FCFA</div></div>
+    <div class="synth-card" style="border-color:${eg<0?'rgba(239,68,68,0.3)':eg>0?'rgba(249,115,22,0.3)':'rgba(0,200,150,0.3)'}">
+      <div class="synth-lbl">Écart Global</div><div class="synth-val" style="color:${eg<0?'#f87171':eg>0?'var(--orange)':'var(--accent)'}">${eg>=0?'+':''}${Math.round(eg).toLocaleString('fr-FR')}</div><div style="font-size:10px;color:var(--text3)">FCFA</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px">
+    <div class="synth-card"><div class="synth-lbl">🔴 Déficits</div><div class="synth-val" style="color:#f87171">${def}</div></div>
+    <div class="synth-card"><div class="synth-lbl">🟡 Excédents</div><div class="synth-val" style="color:var(--orange)">${exc}</div></div>
+    <div class="synth-card"><div class="synth-lbl">✅ Équilibrées</div><div class="synth-val" style="color:var(--accent)">${ok2}</div></div>
+  </div>
+  <div style="margin-top:14px;display:flex;gap:8px">
+    <button class="btn btn-warning" onclick="exportPDF(null)">📄 Exporter rapport PDF</button>
+    <button class="btn btn-secondary" onclick="cloturerJournee()">📅 Clôturer cette journée</button>
+  </div>`
+  document.getElementById('controle-content').innerHTML=html;checkDeficits()
+}
+function updateControle(nom,val){data.controle[nom]=parseFloat(val)||0;saveData();buildControle();checkDeficits()}
+
+
+
+// ══════════════════════════════════════════════════════════
+// RESET DONNÉES D'UNE CAISSIÈRE
+// ══════════════════════════════════════════════════════════
+function resetCaissiere(equipe, nom){
+  const total = getTotalCaissiere(nom)
+  const msg = total > 0
+    ? `Effacer toutes les données de ${nom} ?\n\nTotal actuel : ${fmt(total)}\nCette action est irréversible.`
+    : `Effacer les données de ${nom} ? (caisse vide)`
+  if(!confirm(msg)) return
+
+  const store = equipe==='matin' ? data.matin : data.aprem
+  store[nom] = {recus:{}, especes:0}
+  MODES_MULTI.forEach(m => { store[nom].recus[m] = [] })
+  data.controle[nom] = 0
+
+  // Reconstruire la carte
+  const container = equipe==='matin'
+    ? document.getElementById('saisie-matin')
+    : document.getElementById('saisie-aprem')
+  const oldCard = document.getElementById(`card-${esc(nom)}`)
+  if(oldCard && container){
+    const newCard = buildCaissiereCard(nom, equipe)
+    container.replaceChild(newCard, oldCard)
+  }
+  updateSoldeBanner()
+  checkDeficits()
+  saveData()
+  showToast(`🗑️ Données de ${nom} effacées`)
+}
+
+// Bouton pour tout réinitialiser une équipe
+function resetEquipe(equipe){
+  const noms = getNoms(equipe)
+  const label = equipe==='matin' ? 'Matin' : 'Après-midi'
+  if(!confirm(`Effacer toutes les données de l'équipe ${label} (${noms.length} caissières) ?\nAction irréversible.`)) return
+  noms.forEach(nom => {
+    const store = equipe==='matin' ? data.matin : data.aprem
+    store[nom] = {recus:{}, especes:0}
+    MODES_MULTI.forEach(m => { store[nom].recus[m] = [] })
+    data.controle[nom] = 0
+  })
+  buildEquipe(equipe,
+    document.getElementById(`saisie-${equipe}`),
+    noms)
+  updateSoldeBanner()
+  checkDeficits()
+  saveData()
+  showToast(`🗑️ Équipe ${label} réinitialisée`)
+}
+
+// ══════════════════════════════════════════════════════════
+// RECHERCHE CAISSIÈRE
+// ══════════════════════════════════════════════════════════
+function filterCaissieres(q){
+  const term=q.toLowerCase().trim()
+  const allCards=document.querySelectorAll('.caissiere-card')
+  let visible=0
+  allCards.forEach(card=>{
+    const nom=card.querySelector('.caissiere-name')?.textContent?.toLowerCase()||''
+    const show=!term||nom.includes(term)
+    card.style.display=show?'':'none'
+    if(show)visible++
+  })
+  // Afficher/cacher les en-têtes équipes si aucun résultat
+  const noRes=document.getElementById('search-no-result')
+  if(!term){
+    document.getElementById('saisie-header-matin').style.display=''
+    document.getElementById('saisie-header-aprem').style.display=''
+    document.getElementById('solde-banner').style.display=''
+    if(noRes)noRes.remove()
+  } else {
+    // Vérifier si au moins 1 carte visible par équipe
+    const matCards=[...document.querySelectorAll('#saisie-matin .caissiere-card')]
+    const apCards=[...document.querySelectorAll('#saisie-aprem .caissiere-card')]
+    const matVis=matCards.some(c=>c.style.display!=='none')
+    const apVis=apCards.some(c=>c.style.display!=='none')
+    document.getElementById('saisie-header-matin').style.display=matVis?'':'none'
+    document.getElementById('saisie-header-aprem').style.display=apVis?'':'none'
+    document.getElementById('solde-banner').style.display='none'
+    if(!document.getElementById('search-no-result')&&visible===0){
+      const div=document.createElement('div');div.id='search-no-result';div.className='search-no-result'
+      div.textContent=`Aucune caissière trouvée pour "${q}"`;document.getElementById('saisie-aprem').after(div)
+    } else if(visible>0){const n=document.getElementById('search-no-result');if(n)n.remove()}
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// CHANGEMENT DE MOT DE PASSE
+// ══════════════════════════════════════════════════════════
+function openChangePwd(){
+  const mgr=MANAGERS[currentManager]
+  document.getElementById('changepwd-user').textContent=`Gestionnaire connecté(e) : ${mgr.name}`
+  document.getElementById('pwd-current').value=''
+  document.getElementById('pwd-new').value=''
+  document.getElementById('pwd-confirm').value=''
+  document.getElementById('changepwd-error').classList.remove('show')
+  document.getElementById('changepwd-error').style.display='none'
+  document.getElementById('pwd-strength-bar').style.width='0%'
+  document.getElementById('pwd-strength-label').textContent=''
+  ;['rule-len','rule-upper','rule-num','rule-special'].forEach(id=>{
+    const el=document.getElementById(id);el.className='pwd-rule ko'
+    el.textContent=el.textContent.replace('✓','✗')
+  })
+  openModal('modal-changepwd')
+}
+
+function togglePwdField(id){
+  const i=document.getElementById(id)
+  i.type=i.type==='password'?'text':'password'
+}
+
+function checkPwdStrength(pwd){
+  const rules={
+    len:pwd.length>=8,
+    upper:/[A-Z]/.test(pwd),
+    num:/[0-9]/.test(pwd),
+    special:/[!@#$%^&*()+_={}|;':<>,.?/-]/.test(pwd)
+  }
+  const labels={'len':'rule-len','upper':'rule-upper','num':'rule-num','special':'rule-special'}
+  const texts={'len':'Au moins 8 caractères','upper':'Au moins 1 majuscule','num':'Au moins 1 chiffre','special':'Au moins 1 caractère spécial (!@#...)'}
+  Object.keys(rules).forEach(k=>{
+    const el=document.getElementById(labels[k])
+    if(rules[k]){el.className='pwd-rule ok';el.textContent='✓  '+texts[k]}
+    else{el.className='pwd-rule ko';el.textContent='✗  '+texts[k]}
+  })
+  const score=Object.values(rules).filter(Boolean).length
+  const bar=document.getElementById('pwd-strength-bar')
+  const lbl=document.getElementById('pwd-strength-label')
+  const configs=[
+    {w:'0%',bg:'transparent',txt:''},
+    {w:'25%',bg:'#ef4444',txt:'Faible'},
+    {w:'50%',bg:'#f97316',txt:'Moyen'},
+    {w:'75%',bg:'#f59e0b',txt:'Bon'},
+    {w:'100%',bg:'#00c896',txt:'Excellent'},
+  ]
+  const c=configs[score]
+  bar.style.cssText=`height:4px;border-radius:2px;margin-top:6px;transition:all 0.3s;width:${c.w};background:${c.bg}`
+  lbl.textContent=c.txt;lbl.style.color=c.bg
+}
+
+async function doChangePwd(){
+  const mgr=MANAGERS[currentManager]
+  const cur=document.getElementById('pwd-current').value
+  const nw=document.getElementById('pwd-new').value
+  const conf=document.getElementById('pwd-confirm').value
+  const errEl=document.getElementById('changepwd-error')
+
+  function showErr(msg){errEl.textContent=msg;errEl.classList.add('show');errEl.style.display='block'}
+
+  const curHash=await hashPassword(cur)
+  if(curHash!==mgr.password){showErr('❌ Mot de passe actuel incorrect.');return}
+  if(nw.length<8){showErr('❌ Le nouveau mot de passe doit contenir au moins 8 caractères.');return}
+  if(nw!==conf){showErr('❌ Les deux mots de passe ne correspondent pas.');return}
+  if(nw===cur){showErr("❌ Le nouveau mot de passe doit être différent de l'actuel.");return}
+
+  // Sauvegarder le hash du nouveau mot de passe dans localStorage (persistant)
+  const newHash=await hashPassword(nw)
+  const pwdKey=`socofrais_pwd_${currentManager}`
+  localStorage.setItem(pwdKey, newHash)
+  MANAGERS[currentManager].password=newHash
+
+  closeModal('modal-changepwd')
+  showToast('✅ Mot de passe changé avec succès !')
+}
+
+// Charger les mots de passe personnalisés au démarrage
+function loadCustomPasswords(){
+  Object.keys(MANAGERS).forEach(id=>{
+    const saved=localStorage.getItem(`socofrais_pwd_${id}`)
+    if(saved)MANAGERS[id].password=saved
+  })
+}
+loadCustomPasswords()
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+function buildAll(){buildSaisie();buildDashboard()}
+updateDate();setInterval(updateDate,60000)
+
+// Restaurer session APRÈS toutes les déclarations
+;(()=>{
+  const s=sessionStorage.getItem('socofrais_session')
+  if(s&&MANAGERS[s]){
+    currentManager=s;selectedManagerId=s
+    loadManagerData();setupManagerUI()
+    document.getElementById('login-page').style.display='none'
+    document.getElementById('app-page').style.display='block'
+    updateWeekUI();startAutoSave()
+    buildAll();checkDeficits()
+  }
+})()
+</script>
+</body>
+</html>
